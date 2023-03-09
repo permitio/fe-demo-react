@@ -1,46 +1,57 @@
-# Getting Started with Create React App
+This demo is demonstrating the use of permit fe sdk
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Notice the use in app.tsx
+There I load the ability
+```js
+  useEffect(() => {
+  // It is good to load permission state as soon as possible in the app
+  getAbility().then((caslAbility: any) => {
+    setAbility(caslAbility as any);
+  });
+  }, []);
+  ```
 
-## Available Scripts
+From CaslAbility.ts
+Note that you need to set the real loggedInUser, and the url of your backend permit check url
+and in the next line to add all action and resources you want to check
+```js
+export const getAbility = async () => {
+    const permit = Permit({loggedInUser: "odedbd@gmail.com", backendUrl: "http://localhost:4000/"});
+    await permit.loadLocalState([{ action: "create", resource: "file" }, { action: "update", resource: "file" }, { action: "delete", resource: "file" }, { action: "read", resource: "file" }]);
+    const caslConfig = permitState.getCaslJson();
+    return caslConfig && caslConfig.length? new Ability(caslConfig) : undefined ;
+}
+```
 
-In the project directory, you can run:
+In the child component you need also to load the ability and use it to check permissions
+```js
+  // in this use effect you can get your ability from state or from api
+  useEffect(() => {
+  getAbility().then((caslAbility: any) => {
+    setAbility(caslAbility as any);
+  });
+  }, []);
+```
 
-### `npm start`
+After this you are free to check permissions in your frontend
+```js
+        {/* you can check permissions with permit check to permission status */}
+        {permitState?.check("create", "file") && <p>permit raw create file</p>}
+        {permitState?.check("update", "file") && <p>permit raw update file</p>}
+        {/* you can check permissions with casl Can component */}
+        <Can I="create" a="file" ability={ability}>
+          Yes, you can create file!
+        </Can> 
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+The last thing you need to do is to make sure you having a permit check route in your backend (in this example app `backendUrl: "http://localhost:4000/"`)
+This route gets user, resource and action as get params and returns an permitted object
+{permitted: boolean}
+Here is an example to such route:
+```js
+// add route that get user resource and action as get parameters and check if user is permitted
+app.get("/", async (req, res) => {
+  const { user, resource, action } = req.query;
+  const permitted = await permit.check(user, action, resource); 
+  res.send({permitted});
+});
