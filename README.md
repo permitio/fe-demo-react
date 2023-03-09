@@ -55,3 +55,12 @@ app.get("/", async (req, res) => {
   const permitted = await permit.check(user, action, resource); 
   res.send({permitted});
 });
+```
+
+I've added this server to this repository under the server folder
+you can run it with
+`npm install`
+
+`npm -g install nodemon`
+
+`nodemon test.js`
