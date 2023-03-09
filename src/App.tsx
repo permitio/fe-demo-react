@@ -14,6 +14,7 @@ function App() {
   const [ability, setAbility] = React.useState<any>(undefined);
 
   useEffect(() => {
+  // It is good to load permission state as soon as possible in the app
   getAbility().then((caslAbility: any) => {
     setAbility(caslAbility as any);
   });
