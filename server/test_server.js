@@ -35,9 +35,10 @@ app.get("/", async (req, res) => {
 const checkIfPermitted = async (user, resourcesAndActions) => {
   let isPermittedList = [];
   const promises = resourcesAndActions.map(async (resourceAndAction, index) => {
-  const { resource, action } = resourceAndAction;
-  const permitted = await permit.check(user, action, resource);
-  console.log(isPermitted, "bulk");
+  const { resource, action, resourceAttributes } = resourceAndAction;
+  const resourceObj = {"type": resource, "attributes": resourceAttributes};
+  const permitted = await permit.check(user, action, resourceObj);
+  console.log(permitted, "bulk");
   isPermittedList= [...isPermittedList, {index, permitted}];
   });
   await Promise.all(promises);
