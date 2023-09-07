@@ -1,7 +1,8 @@
-This demo is demonstrating the use of permit fe sdk
+This demo covers the use of the Permit FE-SDK - which can be used to adjust frontend experinces according to the authorization policy.
+The SDK uses [CASL.js](https://casl.js.org/) to provide an interface for various frameworks including React.
+THe inegration is applied via the caslAbility adapter interface.
 
-Notice the use in app.tsx
-There I load the ability
+Take a look at the use of caslAbility in app.tsx:
 ```js
   useEffect(() => {
   // It is good to load permission state as soon as possible in the app
@@ -44,8 +45,8 @@ After this you are free to check permissions in your frontend
         </Can> 
 ```
 
-The last thing you need to do is to make sure you having a permit check route in your backend (in this example app `backendUrl: "http://localhost:4000/"`)
-This route gets user, resource and action as get params and returns an permitted object
+The last thing you need to do is to make sure you have a permit.check route in your backend (in this example app `backendUrl: "http://localhost:4000/"`)
+This route provides user, resource and action as get params and returns a permitted object
 {permitted: boolean}
 Here is an example to such route:
 ```js
@@ -57,7 +58,7 @@ app.get("/", async (req, res) => {
 });
 ```
 
-I've added this server to this repository under the server folder
+A server example is included in this repository under the server folder
 you can run it with
 `npm install`
 
