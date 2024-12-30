@@ -32,7 +32,7 @@ ability ? (
 </Parent>
 ) : (
 <div>
-  lodding...
+  loading...
 </div>));
 //   return (
 //     ability ? <div>loading</div> :
